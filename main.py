@@ -4,15 +4,11 @@ import time
 from datetime import datetime
 from google import genai
 
-# 1. Setup Client dengan SDK Terbaru 2026
+# Setup
 api_key = os.environ.get('GEMINI_API_KEY')
-if not api_key:
-    print("Error: API Key tidak ditemukan!")
-    exit(1)
-
 client = genai.Client(api_key=api_key)
 
-# 2. Daftar Topik Aset
+# Daftar Topik
 topik_list = [
     "Cara Automasi Kerja Menggunakan AI Gratis 2026",
     "Strategi Menghasilkan $300 per Bulan Tanpa Modal",
@@ -22,12 +18,12 @@ topik_list = [
 
 def jalankan_autopilot():
     topik = random.choice(topik_list)
-    print(f"Memproses topik: {topik}...")
+    print(f"Mencoba memproses topik: {topik}...")
     
-    # Kita gunakan model 'gemini-2.0-flash' (Standar paling stabil 2026)
-    model_id = "gemini-2.0-flash" 
+    # KUNCI: Gunakan 1.5-flash untuk kuota yang lebih longgar
+    model_id = "gemini-1.5-flash" 
     
-    # Sistem Re-try (Mencoba sampai 3 kali jika server sibuk)
+    # Mencoba 3 kali dengan jeda 60 detik (agar kuota RPM reset)
     for i in range(3):
         try:
             response = client.models.generate_content(
@@ -35,21 +31,20 @@ def jalankan_autopilot():
                 contents=f"Tulis artikel blog SEO friendly Bahasa Indonesia tentang: {topik}. Format Markdown."
             )
             
-            # Simpan File
             filename = f"artikel_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
             with open(filename, "w", encoding="utf-8") as f:
                 f.write(response.text)
             
             print(f"SUKSES! Aset lahir: {filename}")
-            return # Keluar jika berhasil
+            return 
             
         except Exception as e:
-            print(f"Percobaan {i+1} gagal, mencoba lagi dalam 10 detik... (Error: {e})")
-            time.sleep(10)
+            print(f"Google sedang sibuk (Quota). Menunggu 60 detik sebelum mencoba lagi... (Percobaan {i+1}/3)")
+            time.sleep(60) # Menunggu 1 menit penuh
     
-    print("Gagal setelah 3 kali percobaan.")
+    print("Gagal total setelah menunggu 3 menit. Silakan coba lagi nanti.")
     exit(1)
 
 if __name__ == "__main__":
     jalankan_autopilot()
-    
+            
