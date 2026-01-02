@@ -5,47 +5,53 @@ from datetime import datetime
 
 # 1. Ambil API Key dari Secrets GitHub
 api_key = os.environ.get('GEMINI_API_KEY')
-
 if not api_key:
     print("Error: GEMINI_API_KEY tidak ditemukan!")
     exit(1)
 
 genai.configure(api_key=api_key)
 
-# 2. PERBAIKAN UTAMA: Gunakan model 'gemini-1.5-flash' 
-# Model ini lebih baru, lebih cepat, dan jarang terkena error 404
-model = genai.GenerativeModel('gemini-1.5-flash')
-
-topik_list = [
-    "Cara Automasi Kerja Menggunakan Gemini AI Gratis",
-    "Strategi Menghasilkan $300 per Bulan Tanpa Modal",
-    "Tools AI Terbaik untuk Produktivitas Kerja Remote",
-    "Membangun Aset Digital Menggunakan Python dan AI",
-    "Masa Depan Content Creator di Era Kecerdasan Buatan"
-]
+def dapatkan_model_tersedia():
+    """Mencari model Gemini yang aktif untuk API Key ini"""
+    try:
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                # Kita cari model gemini-1.5 atau gemini-pro
+                if 'gemini-1.5-flash' in m.name or 'gemini-1.5-pro' in m.name or 'gemini-pro' in m.name:
+                    print(f"Menggunakan model ditemukan: {m.name}")
+                    return m.name
+        return None
+    except Exception as e:
+        print(f"Gagal melacak model: {e}")
+        return "gemini-1.5-flash" # Fallback terakhir
 
 def jalankan_autopilot():
     try:
+        model_name = dapatkan_model_tersedia()
+        model = genai.GenerativeModel(model_name)
+        
+        topik_list = [
+            "Peluang Bisnis AI 2026 yang Belum Banyak Diketahui",
+            "Cara Automasi Kerja Menggunakan Gemini AI Gratis",
+            "Strategi Menghasilkan $300 per Bulan Tanpa Modal",
+            "Membangun Aset Digital Menggunakan Python dan AI"
+        ]
+        
         topik = random.choice(topik_list)
-        prompt = f"Tulis artikel blog SEO friendly dalam Bahasa Indonesia tentang: {topik}. Buat minimal 500 kata, gaya bahasa santai, informatif, dan berikan tips praktis di akhir. Gunakan format Markdown."
+        prompt = f"Tulis artikel blog SEO friendly dalam Bahasa Indonesia tentang: {topik}. Gunakan format Markdown."
         
         print(f"Sedang memproses topik: {topik}...")
-        
-        # Memanggil API dengan penanganan error
         response = model.generate_content(prompt)
         
-        if not response.text:
-            print("Error: Gemini memberikan respons kosong.")
-            return
-
+        # Simpan file
         filename = f"artikel_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
         with open(filename, "w", encoding="utf-8") as f:
             f.write(response.text)
         
-        print(f"Berhasil membuat: {filename}")
+        print(f"BERHASIL! Aset dibuat: {filename}")
         
     except Exception as e:
-        print(f"Terjadi kesalahan teknis: {e}")
+        print(f"Terjadi kesalahan: {e}")
         exit(1)
 
 if __name__ == "__main__":
