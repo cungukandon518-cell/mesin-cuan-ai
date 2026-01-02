@@ -1,0 +1,32 @@
+name: Mesin Cuan Otomatis
+
+on:
+  schedule:
+    - cron: '0 20 * * *' # Berjalan otomatis setiap jam 03:00 WIB
+  workflow_dispatch: # Tombol rahasia agar Anda bisa tes jalankan manual
+
+jobs:
+  run-ai:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Dependencies
+        run: pip install google-generativeai
+      - name: Jalankan Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python main.py
+      - name: Simpan Hasil ke GitHub
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add .
+          git commit -m "Update Konten Otomatis: $(date)" || exit 0
+          git push
+          
