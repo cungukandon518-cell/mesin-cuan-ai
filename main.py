@@ -1,59 +1,55 @@
 import os
-import google.generativeai as genai
 import random
+import time
 from datetime import datetime
+from google import genai
 
-# 1. Ambil API Key dari Secrets GitHub
+# 1. Setup Client dengan SDK Terbaru 2026
 api_key = os.environ.get('GEMINI_API_KEY')
 if not api_key:
-    print("Error: GEMINI_API_KEY tidak ditemukan!")
+    print("Error: API Key tidak ditemukan!")
     exit(1)
 
-genai.configure(api_key=api_key)
+client = genai.Client(api_key=api_key)
 
-def dapatkan_model_tersedia():
-    """Mencari model Gemini yang aktif untuk API Key ini"""
-    try:
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                # Kita cari model gemini-1.5 atau gemini-pro
-                if 'gemini-1.5-flash' in m.name or 'gemini-1.5-pro' in m.name or 'gemini-pro' in m.name:
-                    print(f"Menggunakan model ditemukan: {m.name}")
-                    return m.name
-        return None
-    except Exception as e:
-        print(f"Gagal melacak model: {e}")
-        return "gemini-1.5-flash" # Fallback terakhir
+# 2. Daftar Topik Aset
+topik_list = [
+    "Cara Automasi Kerja Menggunakan AI Gratis 2026",
+    "Strategi Menghasilkan $300 per Bulan Tanpa Modal",
+    "Membangun Aset Digital Pasif dengan Python",
+    "Peluang Cuan AI yang Belum Diketahui Banyak Orang"
+]
 
 def jalankan_autopilot():
-    try:
-        model_name = dapatkan_model_tersedia()
-        model = genai.GenerativeModel(model_name)
-        
-        topik_list = [
-            "Peluang Bisnis AI 2026 yang Belum Banyak Diketahui",
-            "Cara Automasi Kerja Menggunakan Gemini AI Gratis",
-            "Strategi Menghasilkan $300 per Bulan Tanpa Modal",
-            "Membangun Aset Digital Menggunakan Python dan AI"
-        ]
-        
-        topik = random.choice(topik_list)
-        prompt = f"Tulis artikel blog SEO friendly dalam Bahasa Indonesia tentang: {topik}. Gunakan format Markdown."
-        
-        print(f"Sedang memproses topik: {topik}...")
-        response = model.generate_content(prompt)
-        
-        # Simpan file
-        filename = f"artikel_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(response.text)
-        
-        print(f"BERHASIL! Aset dibuat: {filename}")
-        
-    except Exception as e:
-        print(f"Terjadi kesalahan: {e}")
-        exit(1)
+    topik = random.choice(topik_list)
+    print(f"Memproses topik: {topik}...")
+    
+    # Kita gunakan model 'gemini-2.0-flash' (Standar paling stabil 2026)
+    model_id = "gemini-2.0-flash" 
+    
+    # Sistem Re-try (Mencoba sampai 3 kali jika server sibuk)
+    for i in range(3):
+        try:
+            response = client.models.generate_content(
+                model=model_id,
+                contents=f"Tulis artikel blog SEO friendly Bahasa Indonesia tentang: {topik}. Format Markdown."
+            )
+            
+            # Simpan File
+            filename = f"artikel_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
+            with open(filename, "w", encoding="utf-8") as f:
+                f.write(response.text)
+            
+            print(f"SUKSES! Aset lahir: {filename}")
+            return # Keluar jika berhasil
+            
+        except Exception as e:
+            print(f"Percobaan {i+1} gagal, mencoba lagi dalam 10 detik... (Error: {e})")
+            time.sleep(10)
+    
+    print("Gagal setelah 3 kali percobaan.")
+    exit(1)
 
 if __name__ == "__main__":
     jalankan_autopilot()
-        
+    
