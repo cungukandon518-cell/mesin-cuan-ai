@@ -1,50 +1,51 @@
 import os
 import random
-import time
-from datetime import datetime
+import smtplib
+from email.message import EmailMessage
 from google import genai
 
-# Setup
+# 1. Konfigurasi
 api_key = os.environ.get('GEMINI_API_KEY')
+sender_email = os.environ.get('SENDER_EMAIL')
+gmail_password = os.environ.get('GMAIL_PASSWORD')
+blogger_email = os.environ.get('BLOGGER_EMAIL')
+
 client = genai.Client(api_key=api_key)
 
-# Daftar Topik
 topik_list = [
+    "Peluang Bisnis AI 2026 yang Belum Banyak Diketahui",
     "Cara Automasi Kerja Menggunakan AI Gratis 2026",
     "Strategi Menghasilkan $300 per Bulan Tanpa Modal",
-    "Membangun Aset Digital Pasif dengan Python",
-    "Peluang Cuan AI yang Belum Diketahui Banyak Orang"
+    "Membangun Aset Digital Pasif dengan Python"
 ]
+
+def kirim_ke_blogger(subjek, isi):
+    msg = EmailMessage()
+    msg.set_content(isi) # Blogger akan memproses Markdown/Text ini
+    msg['Subject'] = subjek
+    msg['From'] = sender_email
+    msg['To'] = blogger_email
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(sender_email, gmail_password)
+        smtp.send_message(msg)
+    print("Artikel telah dikirim ke Blogger!")
 
 def jalankan_autopilot():
     topik = random.choice(topik_list)
-    print(f"Mencoba memproses topik: {topik}...")
-    
-    # KUNCI: Gunakan 1.5-flash untuk kuota yang lebih longgar
-    model_id = "gemini-1.5-flash" 
-    
-    # Mencoba 3 kali dengan jeda 60 detik (agar kuota RPM reset)
-    for i in range(3):
-        try:
-            response = client.models.generate_content(
-                model=model_id,
-                contents=f"Tulis artikel blog SEO friendly Bahasa Indonesia tentang: {topik}. Format Markdown."
-            )
-            
-            filename = f"artikel_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
-            with open(filename, "w", encoding="utf-8") as f:
-                f.write(response.text)
-            
-            print(f"SUKSES! Aset lahir: {filename}")
-            return 
-            
-        except Exception as e:
-            print(f"Google sedang sibuk (Quota). Menunggu 60 detik sebelum mencoba lagi... (Percobaan {i+1}/3)")
-            time.sleep(60) # Menunggu 1 menit penuh
-    
-    print("Gagal total setelah menunggu 3 menit. Silakan coba lagi nanti.")
-    exit(1)
+    try:
+        # Minta Gemini menulis artikel
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=f"Tulis artikel blog SEO friendly Bahasa Indonesia tentang: {topik}. Gunakan format teks biasa yang rapi."
+        )
+        
+        # Kirim langsung ke Blogger
+        kirim_ke_blogger(topik, response.text)
+        
+    except Exception as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     jalankan_autopilot()
-            
+    
