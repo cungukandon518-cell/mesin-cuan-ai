@@ -4,7 +4,7 @@ import smtplib
 import google.generativeai as genai
 from email.message import EmailMessage
 
-# 1. Ambil Secrets
+# 1. Setup
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
@@ -13,7 +13,7 @@ blogger_email = os.environ.get('BLOGGER_EMAIL')
 genai.configure(api_key=api_key)
 
 def kirim_ke_blogger(subjek, isi):
-    print("Mencoba mengirim email...")
+    print("Mengirim ke Blogger...")
     msg = EmailMessage()
     msg.set_content(isi)
     msg['Subject'] = subjek
@@ -25,33 +25,23 @@ def kirim_ke_blogger(subjek, isi):
     print("Email TERKIRIM!")
 
 def main():
-    topik_list = ["Cara Cuan dari AI 2026", "Panduan Blog Otomatis Python", "Strategi Affiliate Tanpa Modal"]
-    topik = random.choice(topik_list)
+    # Daftar Topik
+    topik = random.choice(["Tips Bisnis AI 2026", "Cara Cuan Blog Otomatis", "Masa Depan Kerja Remote"])
     
-    # 2. Cari Model yang Tersedia (Anti-404)
-    model_name = 'gemini-1.5-flash' # Default
+    # 2. Deteksi Model Otomatis (Anti-Error 404)
     try:
-        # Kita tanya Google: "Model apa yang boleh saya pakai?"
         models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        print(f"Model tersedia: {models}")
-        if 'models/gemini-1.5-flash' in models:
-            model_name = 'gemini-1.5-flash'
-        elif 'models/gemini-pro' in models:
-            model_name = 'gemini-pro'
-        else:
-            model_name = models[0].replace('models/', '')
-    except:
-        print("Gagal list models, gunakan default.")
-
-    print(f"Menggunakan model: {model_name}")
-    model = genai.GenerativeModel(model_name)
-    
-    try:
-        response = model.generate_content(f"Tulis artikel blog SEO Indonesia tentang: {topik}")
+        # Pilih gemini-1.5-flash jika ada, jika tidak pakai yang pertama tersedia
+        model_id = 'models/gemini-1.5-flash' if 'models/gemini-1.5-flash' in models else models[0]
+        print(f"Menggunakan model: {model_id}")
+        
+        model = genai.GenerativeModel(model_id.replace('models/', ''))
+        response = model.generate_content(f"Tulis artikel blog SEO Indonesia: {topik}")
+        
         kirim_ke_blogger(topik, response.text)
-        print("PROSES SELESAI!")
+        print("Selesai!")
     except Exception as e:
-        print(f"Gagal generate: {e}")
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
