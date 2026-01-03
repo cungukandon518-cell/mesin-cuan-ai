@@ -4,7 +4,7 @@ import smtplib
 import google.generativeai as genai
 from email.message import EmailMessage
 
-# 1. Setup
+# 1. Konfigurasi Secrets
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
@@ -13,7 +13,7 @@ blogger_email = os.environ.get('BLOGGER_EMAIL')
 genai.configure(api_key=api_key)
 
 def kirim_ke_blogger(subjek, isi):
-    print("Mengirim ke Blogger...")
+    print("Mengirim email ke Blogger...")
     msg = EmailMessage()
     msg.set_content(isi)
     msg['Subject'] = subjek
@@ -22,27 +22,43 @@ def kirim_ke_blogger(subjek, isi):
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(sender_email, gmail_password)
         smtp.send_message(msg)
-    print("Email TERKIRIM!")
+    print("Artikel TERKIRIM!")
 
 def main():
-    # Daftar Topik
-    topik = random.choice(["Tips Bisnis AI 2026", "Cara Cuan Blog Otomatis", "Masa Depan Kerja Remote"])
+    # Daftar Topik Emas (High CPC)
+    topik_list = [
+        "Best AI Tools for Passive Income 2026",
+        "How to Build an Automated Blog with Gemini AI",
+        "Future of Cloud Computing and AI Integration",
+        "Strategi Menghasilkan Dolar dari Blog Otomatis",
+        "Peluang Bisnis AI 2026 yang Belum Banyak Diketahui"
+    ]
+    topik = random.choice(topik_list)
     
-    # 2. Deteksi Model Otomatis (Anti-Error 404)
+    # Deteksi Model Otomatis
     try:
         models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        # Pilih gemini-1.5-flash jika ada, jika tidak pakai yang pertama tersedia
         model_id = 'models/gemini-1.5-flash' if 'models/gemini-1.5-flash' in models else models[0]
-        print(f"Menggunakan model: {model_id}")
-        
         model = genai.GenerativeModel(model_id.replace('models/', ''))
-        response = model.generate_content(f"Tulis artikel blog SEO Indonesia: {topik}")
         
+        # PROMPT: Meminta Gemini menulis artikel + Rekomendasi Link
+        prompt = f"""
+        Tulis artikel blog SEO friendly dalam Bahasa Indonesia tentang: {topik}.
+        Gunakan format teks biasa yang rapi dengan sub-judul.
+        
+        Di bagian paling akhir artikel, tambahkan bagian bernama 'Baca Juga Rekomendasi Artikel Lainnya:' 
+        lalu berikan 3 judul artikel terkait keuangan/AI lainnya dalam bentuk daftar poin.
+        """
+        
+        print(f"Memproses artikel: {topik} menggunakan {model_id}")
+        response = model.generate_content(prompt)
+        
+        # Kirim ke Blogger
         kirim_ke_blogger(topik, response.text)
-        print("Selesai!")
+        print("PROSES SELESAI!")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Terjadi kesalahan: {e}")
 
 if __name__ == "__main__":
     main()
-        
+    
