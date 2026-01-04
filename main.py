@@ -26,13 +26,29 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     # Daftar Topik Emas (High CPC)
-    topik_list = [
-        "Best AI Tools for Passive Income 2026",
-        "How to Build an Automated Blog with Gemini AI",
-        "Future of Cloud Computing and AI Integration",
-        "Strategi Menghasilkan Dolar dari Blog Otomatis",
-        "Peluang Bisnis AI 2026 yang Belum Banyak Diketahui"
-    ]
+         topik_list = [
+        # --- KATEGORI: STRATEGI INVESTASI ---
+        "Panduan Investasi Saham AI untuk Pemula 2026",
+        "Cara Memilih Asset Crypto yang Aman untuk Jangka Panjang",
+        "Strategi Diversifikasi Portofolio di Era Digital",
+        "Mengenal Reksa Dana Berbasis Teknologi AI",
+        "Peluang Investasi Real Estate Virtual di Metaverse",
+        
+        # --- KATEGORI: KEUANGAN PRIBADI ---
+        "5 Aplikasi AI Terbaik untuk Mengatur Keuangan Bulanan",
+        "Cara Menghemat Pengeluaran dengan Bantuan Asisten Virtual",
+        "Tips Melunasi Hutang dengan Metode Snowball Digital",
+        "Membangun Dana Darurat Otomatis untuk Freelancer",
+        "Cara Cerdas Mengatur Budgeting Menggunakan Spreadsheet AI",
+        
+        # --- KATEGORI: PANDUAN ALAT AI ---
+        "Review Tools AI untuk Analisis Pasar Keuangan Terakurat",
+        "Cara Menggunakan ChatGPT untuk Perencanaan Pajak Pribadi",
+        "Top 10 AI Tools yang Bisa Menghasilkan Passive Income",
+        "Panduan Membangun Portofolio Digital dengan AI",
+        "Masa Depan Perbankan: Bagaimana AI Mengelola Uang Kita"
+         ]
+    
     topik = random.choice(topik_list)
     
     # Deteksi Model Otomatis
