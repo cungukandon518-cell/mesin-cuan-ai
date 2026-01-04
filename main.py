@@ -25,55 +25,46 @@ def kirim_ke_blogger(subjek, isi):
     print("Artikel TERKIRIM!")
 
 def main():
-    # Daftar Topik Emas (High CPC)
-         topik_list = [
-        # --- KATEGORI: STRATEGI INVESTASI ---
+    # Daftar Topik Emas (Sesuai Kategori Tentang Kami Anda)
+    topik_list = [
         "Panduan Investasi Saham AI untuk Pemula 2026",
         "Cara Memilih Asset Crypto yang Aman untuk Jangka Panjang",
         "Strategi Diversifikasi Portofolio di Era Digital",
-        "Mengenal Reksa Dana Berbasis Teknologi AI",
-        "Peluang Investasi Real Estate Virtual di Metaverse",
-        
-        # --- KATEGORI: KEUANGAN PRIBADI ---
         "5 Aplikasi AI Terbaik untuk Mengatur Keuangan Bulanan",
         "Cara Menghemat Pengeluaran dengan Bantuan Asisten Virtual",
         "Tips Melunasi Hutang dengan Metode Snowball Digital",
-        "Membangun Dana Darurat Otomatis untuk Freelancer",
-        "Cara Cerdas Mengatur Budgeting Menggunakan Spreadsheet AI",
-        
-        # --- KATEGORI: PANDUAN ALAT AI ---
         "Review Tools AI untuk Analisis Pasar Keuangan Terakurat",
-        "Cara Menggunakan ChatGPT untuk Perencanaan Pajak Pribadi",
         "Top 10 AI Tools yang Bisa Menghasilkan Passive Income",
-        "Panduan Membangun Portofolio Digital dengan AI",
-        "Masa Depan Perbankan: Bagaimana AI Mengelola Uang Kita"
-         ]
+        "Masa Depan Perbankan: Bagaimana AI Mengelola Uang Kita",
+        "Strategi Menghasilkan Dolar dari Blog Otomatis",
+        "Peluang Bisnis AI 2026 yang Belum Banyak Diketahui"
+    ]
     
     topik = random.choice(topik_list)
     
-    # Deteksi Model Otomatis
     try:
+        # Deteksi Model Otomatis
         models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
         model_id = 'models/gemini-1.5-flash' if 'models/gemini-1.5-flash' in models else models[0]
         model = genai.GenerativeModel(model_id.replace('models/', ''))
         
-        # PROMPT: Meminta Gemini menulis artikel + Rekomendasi Link
         prompt = f"""
         Tulis artikel blog SEO friendly dalam Bahasa Indonesia tentang: {topik}.
         Gunakan format teks biasa yang rapi dengan sub-judul.
-        
-        Di bagian paling akhir artikel, tambahkan bagian bernama 'Baca Juga Rekomendasi Artikel Lainnya:' 
+        Di bagian paling akhir artikel, tambahkan bagian 'Baca Juga Rekomendasi Artikel Lainnya:' 
         lalu berikan 3 judul artikel terkait keuangan/AI lainnya dalam bentuk daftar poin.
         """
         
-        print(f"Memproses artikel: {topik} menggunakan {model_id}")
+        print(f"Memproses artikel: {topik}")
         response = model.generate_content(prompt)
         
         # Kirim ke Blogger
         kirim_ke_blogger(topik, response.text)
         print("PROSES SELESAI!")
+        
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
+        exit(1)
 
 if __name__ == "__main__":
     main()
