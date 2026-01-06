@@ -1,23 +1,25 @@
 import os
 import smtplib
 import random
-import google.generativeai
+import google.generativeai as genai
 from email.message import EmailMessage
 
-# 1. Kredensial
+# 1. Identitas Rahasia
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
+# 2. Aktifkan Otak AI
 genai.configure(api_key=api_key)
 
-# 2. DAFTAR TOPIK MANUAL (Agar tidak kembar)
+# 3. DAFTAR JUDUL (Ubah di sini kapan saja lewat HP agar tidak kembar)
 topik_list = [
-    "Cara Cerdas Mengatur Keuangan di Tahun 2026",
-    "Investasi Saham untuk Pemula: Mulai dari Mana?",
-    "Tips Menabung 50 Persen Gaji Tanpa Tersiksa",
-    "Mengenal Aset yang Cocok untuk Masa Depan"
+    "Tips Mengelola Keuangan Pribadi yang Efektif di Tahun 2026",
+    "Investasi Saham untuk Pemula: Cara Memulai dengan Modal Kecil",
+    "Rahasia Menabung 50 Persen dari Gaji Tanpa Harus Sengsara",
+    "Mengenal Aset Masa Depan yang Cocok untuk Investasi Jangka Panjang",
+    "Strategi Melunasi Hutang dan Cicilan dengan Cepat"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -31,30 +33,25 @@ def kirim_ke_blogger(subjek, isi):
         smtp.send_message(msg)
 
 def main():
-    topik_pilihan = random.choice(topik_list)
-    # DAFTAR MODEL YANG AKAN DICOBA SATU PER SATU
-    daftar_model = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro']
-    
-    berhasil = False
-    for nama_model in daftar_model:
-        try:
-            print(f"Mencoba mengetuk pintu model: {nama_model}...")
-            model = genai.GenerativeModel(nama_model)
-            response = model.generate_content(f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}.")
-            
-            # Jika sampai sini tidak error, berarti berhasil
-            kirim_ke_blogger(topik_pilihan, response.text)
-            print(f"ALHAMDULILLAH! Berhasil dengan model {nama_model}. Terbit: {topik_pilihan}")
-            berhasil = True
-            break # Berhenti mencari jika sudah sukses
-        except Exception as e:
-            print(f"Model {nama_model} menolak (404/Error). Mencoba model berikutnya...")
-            continue
-
-    if not berhasil:
-        print("Semua model menolak. Harap cek apakah API Key di GitHub Secrets sudah benar.")
+    try:
+        # Memilih satu judul secara acak dari daftar di atas
+        topik_pilihan = random.choice(topik_list)
+        
+        # Menggunakan model paling stabil (Jalur Centang Hijau)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        # Membuat isi artikel
+        prompt = f"Tulis artikel blog SEO friendly yang mendalam tentang: {topik_pilihan}."
+        response = model.generate_content(prompt)
+        
+        # Kirim ke Blogger
+        kirim_ke_blogger(topik_pilihan, response.text)
+        print(f"ALHAMDULILLAH! Centang Hijau Kembali! Terbit: {topik_pilihan}")
+        
+    except Exception as e:
+        print(f"Robot gagal karena: {e}")
         exit(1)
 
 if __name__ == "__main__":
     main()
-            
+    
