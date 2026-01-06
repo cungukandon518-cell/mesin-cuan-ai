@@ -1,7 +1,7 @@
 import os
 import smtplib
 import random
-import google.generativeai as genai # Sinkronisasi Identitas 2026
+from google import genai # Identitas resmi terbaru
 from email.message import EmailMessage
 
 # 1. Kredensial
@@ -10,15 +10,15 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi
-genai.configure(api_key=api_key)
+# 2. Inisialisasi Client Modern (Otomatis menggunakan jalur stabil v1)
+client = genai.Client(api_key=api_key)
 
-# 3. DAFTAR TOPIK MANUAL (Agar Artikel Tidak Kembar)
+# 3. Daftar Topik Manual
 topik_list = [
-    "Tips Mengatur Keuangan di Tahun 2026 Agar Cepat Kaya",
-    "Cara Investasi Aman untuk Pemula Tahun Ini",
-    "Rahasia Menabung yang Jarang Diketahui Orang",
-    "Strategi Melunasi Hutang Tanpa Stres"
+    "Strategi Mengatur Gaji Agar Bisa Investasi di Tahun 2026",
+    "Tips Memilih Saham AI untuk Tabungan Masa Tua",
+    "Cara Efektif Melunasi Hutang Tanpa Stres Berlebihan",
+    "Pentingnya Memiliki Dana Darurat di Masa Depan"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -33,19 +33,19 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        topik = random.choice(topik_list)
+        topik_pilihan = random.choice(topik_list)
         
-        # MENGGUNAKAN MODEL STABIL UNTUK MENGHINDARI 404
-        # Kami memanggil model secara eksplisit untuk jalur v1 resmi
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Menggunakan sintaks modern: client.models.generate_content
+        response = client.models.generate_content(
+            model="gemini-1.5-flash", 
+            contents=f"Tulis artikel blog SEO friendly yang menarik tentang: {topik_pilihan}."
+        )
         
-        response = model.generate_content(f"Tulis artikel blog SEO friendly tentang: {topik}.")
-        
-        kirim_ke_blogger(topik, response.text)
-        print(f"AKHIRNYA SUKSES! Centang Hijau Terbit: {topik}")
+        # Kirim artikel
+        kirim_ke_blogger(topik_pilihan, response.text)
+        print(f"AKHIRNYA SUKSES! Robot Modern Terbit: {topik_pilihan}")
         
     except Exception as e:
-        # Jika masih 404, narator akan menganalisis pesan di bawah ini
         print(f"Detail kendala: {e}")
         exit(1)
 
