@@ -26,19 +26,40 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     # Daftar Topik Emas (Sesuai Kategori Tentang Kami Anda)
-    topik_list = [
-        "Panduan Investasi Saham AI untuk Pemula 2026",
-        "Cara Memilih Asset Crypto yang Aman untuk Jangka Panjang",
-        "Strategi Diversifikasi Portofolio di Era Digital",
-        "5 Aplikasi AI Terbaik untuk Mengatur Keuangan Bulanan",
-        "Cara Menghemat Pengeluaran dengan Bantuan Asisten Virtual",
-        "Tips Melunasi Hutang dengan Metode Snowball Digital",
-        "Review Tools AI untuk Analisis Pasar Keuangan Terakurat",
-        "Top 10 AI Tools yang Bisa Menghasilkan Passive Income",
-        "Masa Depan Perbankan: Bagaimana AI Mengelola Uang Kita",
-        "Strategi Menghasilkan Dolar dari Blog Otomatis",
-        "Peluang Bisnis AI 2026 yang Belum Banyak Diketahui"
-    ]
+        topik_list = [
+        "Dampak AI terhadap Sistem Pajak Pribadi di Tahun 2026",
+        "Etika Penggunaan AI dalam Manajemen Aset Keluarga",
+        "Cara Menggunakan AI untuk Memprediksi Inflasi Lokal",
+        "Transformasi Pekerjaan Sektor Finansial Akibat Otomasi AI",
+        "Keamanan Data Biometrik dalam Transaksi Digital Masa Depan",
+        "Memanfaatkan AI untuk Mendeteksi Penipuan (Scam) Keuangan",
+        "Membangun Dana Pensiun dengan Bantuan Algoritma AI",
+        "Sistem Kredit Skor Berbasis Perilaku Digital dan AI",
+        "Investasi di Perusahaan Start-up Infrastruktur AI",
+        "Cara Kerja Smart Contracts dalam Pinjaman Peer-to-Peer",
+        "Mengelola Anggaran Liburan Keluarga Menggunakan ChatGPT",
+        "Masa Depan Uang Tunai di Tengah Perkembangan Digital ID",
+        "Peran AI dalam Memilih Skema Asuransi Kesehatan Terbaik",
+        "Strategi Arbitrase Kripto Menggunakan Bot AI Sederhana",
+        "Pengaruh Metaverse terhadap Ekonomi Ritel Tradisional",
+        "Cara AI Membantu UMKM Melakukan Pembukuan Otomatis",
+        "Mengoptimalkan Portofolio Reksa Dana dengan Analisis Sentiment AI",
+        "Tantangan Regulasi AI di Sektor Perbankan Global",
+        "Memahami Konsep Tokenisasi Aset Fisik (Real World Assets)",
+        "Menggunakan AI untuk Mencari Beasiswa Pendidikan Luar Negeri",
+        "Dampak Komputasi Kuantum terhadap Enkripsi Dompet Kripto",
+        "Strategi Side Hustle sebagai Prompt Engineer AI",
+        "AI dalam Perencanaan Warisan dan Distribusi Aset Digital",
+        "Analisis Tren Pasar Saham Berbasis Data Satelit dan AI",
+        "Cara Memproteksi Kekayaan dari Ancaman Deepfake Perbankan",
+        "Evolusi E-wallet Menjadi Super-App Berbasis Kecerdasan Buatan",
+        "Potensi Investasi Sektor Energi Hijau untuk Data Center AI",
+        "Menggunakan AI untuk Meminimalkan Biaya Operasional Bisnis",
+        "Prediksi Ekonomi Pasca-Otomasi: Apakah Kita Siap untuk UBI?",
+        "Panduan Keamanan Siber untuk Investor Retail Tahun 2026"
+        ]
+    
+    
     
     topik = random.choice(topik_list)
     
