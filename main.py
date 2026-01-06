@@ -1,7 +1,7 @@
 import os
 import smtplib
 from email.message import EmailMessage
-from google import genai # Memanggil library masa depan
+import google.genai as genai_new # Menggunakan identitas baru agar tidak bentrok
 
 # 1. Ambil Rahasia
 api_key = os.environ.get('GEMINI_API_KEY')
@@ -9,8 +9,8 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Client (Jalur Resmi, Anti-404)
-client = genai.Client(api_key=api_key)
+# 2. Inisialisasi Client Jalur Resmi (Anti-404)
+client = genai_new.Client(api_key=api_key)
 
 def kirim_ke_blogger(subjek, isi):
     msg = EmailMessage()
@@ -24,25 +24,27 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Menggunakan model Gemini 1.5 Flash tanpa embel-embel v1beta
-        m_name = "gemini-1.5-flash"
+        # Menggunakan model paling stabil untuk tahun 2026
+        model_id = "gemini-1.5-flash"
         
-        # A. Buat Judul Unik (Anti-Duplikat)
-        p_j = "Buat satu judul unik artikel blog tentang tips finansial masa depan 2026. Judul saja."
-        res_j = client.models.generate_content(model=m_name, contents=p_j)
-        topik = res_j.text.strip()
+        # A. Buat Judul
+        p_judul = "Tulis satu judul artikel blog unik tentang tips finansial 2026. Judul saja."
+        res_judul = client.models.generate_content(model=model_id, contents=p_judul)
+        topik = res_judul.text.strip()
         
         # B. Tulis Artikel
-        p_a = f"Tulis artikel blog SEO friendly yang mendalam berdasarkan judul: {topik}."
-        res_a = client.models.generate_content(model=m_name, contents=p_a)
+        p_artikel = f"Tulis artikel blog SEO friendly yang mendalam berdasarkan judul: {topik}."
+        res_artikel = client.models.generate_content(model=model_id, contents=p_artikel)
         
-        # C. Kirim
-        kirim_ke_blogger(topik, res_a.text)
-        print(f"ALHAMDULILLAH! Robot berhasil terbit artikel: {topik}")
+        # C. Posting
+        kirim_ke_blogger(topik, res_artikel.text)
+        print(f"AKHIRNYA BERHASIL! Robot terbit artikel: {topik}")
         
     except Exception as e:
-        print(f"Sistem menyerah karena: {e}")
+        # Jika masih error, robot akan memberitahu detail aslinya
+        print(f"Detail kendala: {e}")
         exit(1)
 
 if __name__ == "__main__":
     main()
+        
