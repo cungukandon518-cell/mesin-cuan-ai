@@ -29,4 +29,3 @@ jobs:
           GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
           BLOGGER_EMAIL: ${{ secrets.BLOGGER_EMAIL }}
         run: python main.py
-        
