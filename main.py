@@ -1,23 +1,24 @@
 import os
 import smtplib
 import random
-from google import genai # Memanggil identitas 2026 agar tidak ModuleNotFoundError
+import google.generativeai as genai # Sinkronisasi Identitas 2026
 from email.message import EmailMessage
 
-# 1. Ambil Kunci Rahasia
+# 1. Kredensial
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Robot (MEMAKSA PINTU UTAMA 'v1')
-client = genai.Client(api_key=api_key, http_options={'api_version': 'v1'})
+# 2. Inisialisasi
+genai.configure(api_key=api_key)
 
-# 3. DAFTAR TOPIK MANUAL (Agar Tidak Kembar)
+# 3. DAFTAR TOPIK MANUAL (Agar Artikel Tidak Kembar)
 topik_list = [
-    "Tips Keuangan 2026: Cara Mengatur Gaji Agar Tidak Cepat Habis",
-    "Investasi AI: Mengapa Tahun Ini Adalah Waktu Terbaik Memulai",
-    "Rahasia Dana Darurat yang Sering Dilupakan Orang"
+    "Tips Mengatur Keuangan di Tahun 2026 Agar Cepat Kaya",
+    "Cara Investasi Aman untuk Pemula Tahun Ini",
+    "Rahasia Menabung yang Jarang Diketahui Orang",
+    "Strategi Melunasi Hutang Tanpa Stres"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -34,19 +35,20 @@ def main():
     try:
         topik = random.choice(topik_list)
         
-        # Eksekusi AI lewat jalur resmi v1 (Anti 404)
-        response = client.models.generate_content(
-            model="gemini-1.5-flash", 
-            contents=f"Tulis artikel blog SEO friendly tentang: {topik}."
-        )
+        # MENGGUNAKAN MODEL STABIL UNTUK MENGHINDARI 404
+        # Kami memanggil model secara eksplisit untuk jalur v1 resmi
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        response = model.generate_content(f"Tulis artikel blog SEO friendly tentang: {topik}.")
         
         kirim_ke_blogger(topik, response.text)
-        print(f"AKHIRNYA SUKSES! Siklus Putus. Terbit: {topik}")
+        print(f"AKHIRNYA SUKSES! Centang Hijau Terbit: {topik}")
         
     except Exception as e:
+        # Jika masih 404, narator akan menganalisis pesan di bawah ini
         print(f"Detail kendala: {e}")
         exit(1)
 
 if __name__ == "__main__":
     main()
-        
+    
