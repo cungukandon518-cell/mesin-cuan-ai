@@ -1,16 +1,16 @@
 import os
 import smtplib
-import google.generativeai as genai
+from google import genai # Memanggil otak baru
 from email.message import EmailMessage
 
-# 1. Kredensial dari GitHub Secrets
+# 1. Ambil Rahasia GitHub
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Konfigurasi "Otak" AI
-genai.configure(api_key=api_key)
+# 2. Inisialisasi Robot
+client = genai.Client(api_key=api_key)
 
 def kirim_ke_blogger(subjek, isi):
     msg = EmailMessage()
@@ -24,25 +24,24 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Menggunakan model Gemini 1.5 Flash yang paling kompatibel
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Menggunakan model paling stabil untuk tahun 2026
+        m_id = "gemini-1.5-flash"
         
-        # A. Mencari Judul Baru (Mencegah Duplikat)
-        prompt_judul = "Berikan satu judul unik tentang tips keuangan atau investasi tahun 2026. Hanya judul saja."
-        res_judul = model.generate_content(prompt_judul)
+        # A. Buat Judul Unik
+        p_judul = "Tulis satu judul artikel blog unik tentang tips keuangan cerdas 2026. Judul saja."
+        res_judul = client.models.generate_content(model=m_id, contents=p_judul)
         topik = res_judul.text.strip()
         
-        # B. Menulis Konten
-        prompt_artikel = f"Tulis artikel blog yang menarik dan SEO friendly berdasarkan judul ini: {topik}."
-        res_artikel = model.generate_content(prompt_artikel)
+        # B. Tulis Konten Lengkap
+        p_artikel = f"Tulis artikel blog SEO friendly yang mendalam berdasarkan judul: {topik}."
+        res_artikel = client.models.generate_content(model=m_id, contents=p_artikel)
         
-        # C. Kirim ke Blog
+        # C. Posting ke Blog
         kirim_ke_blogger(topik, res_artikel.text)
-        print(f"Sukses! Artikel terbit: {topik}")
+        print(f"Alhamdulillah! Robot berhasil posting: {topik}")
         
     except Exception as e:
-        # Menampilkan pesan jika terjadi kendala teknis
-        print(f"Ada kendala: {e}")
+        print(f"Ada kendala baru: {e}")
         exit(1)
 
 if __name__ == "__main__":
