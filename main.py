@@ -3,13 +3,13 @@ import smtplib
 from email.message import EmailMessage
 from google import genai # Memanggil library masa depan
 
-# 1. Ambil Kredensial
+# 1. Ambil Rahasia
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Client (Tanpa v1beta, langsung Jalur Utama)
+# 2. Inisialisasi Client (Jalur Resmi, Anti-404)
 client = genai.Client(api_key=api_key)
 
 def kirim_ke_blogger(subjek, isi):
@@ -24,21 +24,21 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Menggunakan model Gemini 1.5 Flash jalur stabil
-        model_name = "gemini-1.5-flash"
+        # Menggunakan model Gemini 1.5 Flash tanpa embel-embel v1beta
+        m_name = "gemini-1.5-flash"
         
-        # A. Mencari Judul (Anti-Duplikat)
-        prompt_j = "Berikan satu judul unik artikel blog tentang finansial 2026. Judul saja."
-        res_j = client.models.generate_content(model=model_name, contents=prompt_j)
+        # A. Buat Judul Unik (Anti-Duplikat)
+        p_j = "Buat satu judul unik artikel blog tentang tips finansial masa depan 2026. Judul saja."
+        res_j = client.models.generate_content(model=m_name, contents=p_j)
         topik = res_j.text.strip()
         
-        # B. Menulis Artikel
-        prompt_a = f"Tulis artikel blog SEO friendly berdasarkan judul ini: {topik}."
-        res_a = client.models.generate_content(model=model_name, contents=prompt_a)
+        # B. Tulis Artikel
+        p_a = f"Tulis artikel blog SEO friendly yang mendalam berdasarkan judul: {topik}."
+        res_a = client.models.generate_content(model=m_name, contents=p_a)
         
         # C. Kirim
         kirim_ke_blogger(topik, res_a.text)
-        print(f"Alhamdulillah! Centang Hijau! Terbit: {topik}")
+        print(f"ALHAMDULILLAH! Robot berhasil terbit artikel: {topik}")
         
     except Exception as e:
         print(f"Sistem menyerah karena: {e}")
@@ -46,4 +46,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-        
