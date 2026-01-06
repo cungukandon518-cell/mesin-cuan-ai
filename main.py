@@ -25,8 +25,8 @@ def kirim_ke_blogger(subjek, isi):
     print("Artikel TERKIRIM!")
 
 def main():
-    # Daftar Topik Emas (Sesuai Kategori Tentang Kami Anda)
-        topik_list = [
+    # Daftar Topik Emas Terbaru (Teknologi, Keuangan, AI)
+    topik_list = [
         "Dampak AI terhadap Sistem Pajak Pribadi di Tahun 2026",
         "Etika Penggunaan AI dalam Manajemen Aset Keluarga",
         "Cara Menggunakan AI untuk Memprediksi Inflasi Lokal",
@@ -57,14 +57,13 @@ def main():
         "Menggunakan AI untuk Meminimalkan Biaya Operasional Bisnis",
         "Prediksi Ekonomi Pasca-Otomasi: Apakah Kita Siap untuk UBI?",
         "Panduan Keamanan Siber untuk Investor Retail Tahun 2026"
-        ]
+    ]
     
-    
-    
+    # Baris ini sekarang sudah lurus (Indentation Fixed)
     topik = random.choice(topik_list)
     
     try:
-        # Deteksi Model Otomatis
+        # Deteksi Model Otomatis (Gaya Klasik Stabil Anda)
         models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
         model_id = 'models/gemini-1.5-flash' if 'models/gemini-1.5-flash' in models else models[0]
         model = genai.GenerativeModel(model_id.replace('models/', ''))
