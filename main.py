@@ -1,7 +1,7 @@
 import os
 import smtplib
 import random
-import google.generativeai as genai
+import google.generativeai
 from email.message import EmailMessage
 
 # 1. Kredensial
