@@ -1,7 +1,7 @@
 import os
 import smtplib
 import random
-import google.generativeai as genai
+from google import genai # Memanggil identitas 2026
 from email.message import EmailMessage
 
 # 1. Kredensial
@@ -10,16 +10,18 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi
-genai.configure(api_key=api_key)
+# 2. Inisialisasi (MENAMBAHKAN V1 UNTUK ANTI-404)
+client = genai.Client(
+    api_key=api_key,
+    http_options={'api_version': 'v1'}
+)
 
-# 3. DAFTAR TOPIK (Ganti judul di sini agar tidak kembar)
+# 3. DAFTAR TOPIK MANUAL
 topik_list = [
     "Cara Cerdas Mengatur Keuangan Pribadi di Tahun 2026",
     "Investasi Saham AI: Panduan Lengkap untuk Pemula",
     "Rahasia Menabung 50 Persen Gaji Tanpa Tersiksa",
-    "Mengenal Perbedaan Aset dan Liabilitas di Masa Depan",
-    "Strategi Melunasi Hutang dengan Cepat dan Aman"
+    "Pentingnya Memiliki Dana Darurat Sejak Dini"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -34,16 +36,16 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Pilih topik acak dari daftar
         topik_pilihan = random.choice(topik_list)
         
-        # Gunakan model paling stabil
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}.")
+        # Eksekusi AI lewat jalur resmi v1 (Anti 404)
+        response = client.models.generate_content(
+            model="gemini-1.5-flash", 
+            contents=f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}."
+        )
         
-        # Publikasi
         kirim_ke_blogger(topik_pilihan, response.text)
-        print(f"AKHIRNYA SUKSES! Terbit artikel: {topik_pilihan}")
+        print(f"AKHIRNYA SUKSES! Centang Hijau Kembali! Terbit: {topik_pilihan}")
         
     except Exception as e:
         print(f"Detail kendala: {e}")
