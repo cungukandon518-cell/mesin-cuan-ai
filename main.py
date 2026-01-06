@@ -1,16 +1,28 @@
 import os
 import smtplib
+import random
+import google.generativeai as genai
 from email.message import EmailMessage
-from google import genai # Memanggil library versi terbaru
 
-# 1. Kredensial dari GitHub Secrets
+# 1. Kredensial
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Robot dengan Jalur Stabil (Menghindari v1beta)
-client = genai.Client(api_key=api_key)
+# 2. Konfigurasi AI
+genai.configure(api_key=api_key)
+
+# 3. DAFTAR TOPIK MANUAL (Ubah di sini agar tidak kembar)
+topik_list = [
+    "Tips Mengelola Gaji Kecil Agar Bisa Nabung di 2026",
+    "Cara Investasi Crypto Aman untuk Pemula Tahun Ini",
+    "Rahasia Mengatur Keuangan Keluarga Tanpa Stres",
+    "Daftar Saham AI Paling Menjanjikan Bulan Januari",
+    "Cara Melunasi Hutang dengan Metode Snowball",
+    "Aplikasi Keuangan Terbaik yang Wajib Ada di HP Anda",
+    "Pentingnya Dana Darurat di Masa Depan"
+]
 
 def kirim_ke_blogger(subjek, isi):
     msg = EmailMessage()
@@ -24,25 +36,21 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Menggunakan model Gemini 1.5 Flash jalur resmi
-        model_id = "gemini-1.5-flash"
+        # Memilih satu topik secara acak dari list di atas
+        topik_pilihan = random.choice(topik_list)
         
-        # A. Membuat Judul Unik (Mencegah artikel ganda seperti di 6 Jan)
-        prompt_j = "Buat satu judul unik artikel blog tentang tips keuangan cerdas 2026. Judul saja."
-        res_j = client.models.generate_content(model=model_id, contents=prompt_j)
-        topik = res_j.text.strip()
+        model = genai.GenerativeModel('gemini-pro') # Menggunakan pro yang sangat stabil
         
-        # B. Menulis Artikel Lengkap
-        prompt_a = f"Tulis artikel blog SEO friendly yang menarik berdasarkan judul: {topik}."
-        res_a = client.models.generate_content(model=model_id, contents=p_a)
+        # Membuat konten berdasarkan topik pilihan
+        prompt = f"Tulis artikel blog SEO friendly yang mendalam tentang: {topik_pilihan}."
+        response = model.generate_content(prompt)
         
-        # C. Publikasi
-        kirim_ke_blogger(topik, res_a.text)
-        print(f"AKHIRNYA SUKSES! Robot berhasil posting artikel: {topik}")
+        # Kirim ke Blogger
+        kirim_ke_blogger(topik_pilihan, response.text)
+        print(f"SUKSES! Centang Hijau Kembali! Terbit: {topik_pilihan}")
         
     except Exception as e:
-        # Mencatat detail kendala jika masih terjadi error
-        print(f"Robot menemui kendala teknis: {e}")
+        print(f"Gagal karena: {e}")
         exit(1)
 
 if __name__ == "__main__":
