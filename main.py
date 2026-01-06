@@ -1,16 +1,22 @@
 import os
 import smtplib
-from google import genai  # Menggunakan library terbaru sesuai instruksi log
 from email.message import EmailMessage
+# Menggunakan pemanggilan langsung untuk menghindari bentrokan sistem
+try:
+    import google.genai as genai_api
+except ImportError:
+    # Jika masih gagal, robot akan memberikan info yang jelas
+    print("Pustaka google-genai belum terpasang dengan benar.")
+    exit(1)
 
-# 1. Mengambil kredensial dari GitHub Secrets
+# 1. Kredensial
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Client GenAI Terbaru
-client = genai.Client(api_key=api_key)
+# 2. Inisialisasi Client
+client = genai_api.Client(api_key=api_key)
 
 def kirim_ke_blogger(subjek, isi):
     msg = EmailMessage()
@@ -24,27 +30,25 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Menggunakan model terbaru yang stabil di 2026
-        model_name = "gemini-2.0-flash" 
+        # Menggunakan model 1.5 Flash yang paling stabil
+        model_id = "gemini-1.5-flash"
         
-        # LANGKAH A: Membuat Judul Unik (Anti-Duplikat)
-        prompt_judul = "Buatkan satu judul artikel blog yang sangat menarik dan sedang tren tentang Keuangan atau Teknologi AI di tahun 2026. Berikan judul saja."
-        respon_judul = client.models.generate_content(model=model_name, contents=prompt_judul)
-        topik = respon_judul.text.strip()
+        # A. Membuat Judul Unik (Anti-Duplikat)
+        p_judul = "Buatkan satu judul unik artikel blog tentang Keuangan/Investasi 2026. Judul saja."
+        res_judul = client.models.generate_content(model=model_id, contents=p_judul)
+        topik = res_judul.text.strip()
         
-        # LANGKAH B: Menulis Artikel Lengkap
-        prompt_artikel = f"Tulis artikel blog yang mendalam dan SEO friendly berdasarkan judul ini: {topik}."
-        response_artikel = client.models.generate_content(model=model_name, contents=prompt_artikel)
+        # B. Menulis Artikel
+        p_artikel = f"Tulis artikel blog SEO friendly berdasarkan judul ini: {topik}."
+        res_artikel = client.models.generate_content(model=model_id, contents=p_artikel)
         
-        # LANGKAH C: Publikasi
-        kirim_ke_blogger(topik, response_artikel.text)
-        print(f"Berhasil posting artikel unik: {topik}")
+        # C. Publikasi
+        kirim_ke_blogger(topik, res_artikel.text)
+        print(f"Berhasil! Artikel terbit: {topik}")
         
     except Exception as e:
-        # Mencatat detail kesalahan jika terjadi kegagalan
-        print(f"Terjadi kesalahan: {e}")
+        print(f"Terjadi kesalahan teknis: {e}")
         exit(1)
 
 if __name__ == "__main__":
     main()
-        
