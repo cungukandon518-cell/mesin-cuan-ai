@@ -1,8 +1,12 @@
 import os
 import smtplib
 import random
-from google import genai # Identitas resmi terbaru
 from email.message import EmailMessage
+# Menggunakan cara import paling aman untuk paket google-genai
+try:
+    from google import genai
+except ImportError:
+    import google.genai as genai
 
 # 1. Kredensial
 api_key = os.environ.get('GEMINI_API_KEY')
@@ -10,15 +14,15 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Client Modern (Otomatis menggunakan jalur stabil v1)
+# 2. Inisialisasi Client Modern (Otomatis menggunakan jalur stabil v1, anti 404)
 client = genai.Client(api_key=api_key)
 
-# 3. Daftar Topik Manual
+# 3. DAFTAR TOPIK MANUAL
 topik_list = [
-    "Strategi Mengatur Gaji Agar Bisa Investasi di Tahun 2026",
-    "Tips Memilih Saham AI untuk Tabungan Masa Tua",
-    "Cara Efektif Melunasi Hutang Tanpa Stres Berlebihan",
-    "Pentingnya Memiliki Dana Darurat di Masa Depan"
+    "Tips Finansial 2026: Cara Mengelola Gaji Agar Tidak Cepat Habis",
+    "Investasi AI: Mengapa Tahun Ini Adalah Waktu Terbaik Memulai",
+    "Rahasia Dana Darurat yang Sering Dilupakan Orang",
+    "Cara Melunasi Cicilan Tanpa Gali Lubang Tutup Lubang"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -33,22 +37,21 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        topik_pilihan = random.choice(topik_list)
+        topik = random.choice(topik_list)
         
-        # Menggunakan sintaks modern: client.models.generate_content
+        # Eksekusi dengan model Flash terbaru lewat jalur resmi
         response = client.models.generate_content(
             model="gemini-1.5-flash", 
-            contents=f"Tulis artikel blog SEO friendly yang menarik tentang: {topik_pilihan}."
+            contents=f"Tulis artikel blog SEO friendly yang mendalam tentang: {topik}."
         )
         
-        # Kirim artikel
-        kirim_ke_blogger(topik_pilihan, response.text)
-        print(f"AKHIRNYA SUKSES! Robot Modern Terbit: {topik_pilihan}")
+        kirim_ke_blogger(topik, response.text)
+        print(f"AKHIRNYA SUKSES! Robot Modern Berhasil Terbit: {topik}")
         
     except Exception as e:
-        print(f"Detail kendala: {e}")
+        print(f"Kendala teknis: {e}")
         exit(1)
 
 if __name__ == "__main__":
     main()
-    
+        
