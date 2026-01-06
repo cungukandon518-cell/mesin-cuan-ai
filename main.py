@@ -1,8 +1,8 @@
 import os
 import smtplib
 import random
+from google import genai 
 from email.message import EmailMessage
-from google import genai # Memanggil identitas 2026
 
 # 1. Kredensial
 api_key = os.environ.get('GEMINI_API_KEY')
@@ -10,19 +10,16 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Robot (PAKSA JALUR V1 - ANTI 404)
-client = genai.Client(
-    api_key=api_key,
-    http_options={'api_version': 'v1'}
-)
+# 2. Inisialisasi Robot (Gunakan jalur otomatis)
+client = genai.Client(api_key=api_key)
 
-# 3. DAFTAR TOPIK MANUAL (Agar Tidak Kembar)
+# 3. DAFTAR TOPIK MANUAL (Agar Artikel Tidak Kembar)
 topik_list = [
-    "Tips Keuangan 2026: Cara Mengatur Gaji Agar Tidak Cepat Habis",
-    "Investasi AI: Mengapa Tahun Ini Adalah Waktu Terbaik Memulai",
-    "Rahasia Dana Darurat yang Sering Dilupakan Orang",
-    "Cara Melunasi Cicilan Tanpa Gali Lubang Tutup Lubang",
-    "Strategi Cerdas Membeli Emas untuk Jangka Panjang"
+    "Cara Cerdas Mengatur Keuangan di Tahun 2026",
+    "Investasi Saham untuk Pemula: Mulai dari Mana?",
+    "Tips Menabung 50 Persen Gaji Tanpa Tersiksa",
+    "Mengenal Aset yang Cocok untuk Masa Depan",
+    "Strategi Melunasi Hutang dengan Cepat dan Aman"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -37,18 +34,17 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Pilih judul secara acak
         topik_pilihan = random.choice(topik_list)
         
-        # Eksekusi AI lewat jalur resmi v1
+        # MENGGUNAKAN GEMINI-1.0-PRO UNTUK MENGHINDARI 404
+        # Jika model 1.5-flash menolak, model 1.0-pro biasanya selalu terbuka
         response = client.models.generate_content(
-            model="gemini-1.5-flash", 
-            contents=f"Tulis artikel blog SEO friendly yang mendalam tentang: {topik_pilihan}."
+            model="gemini-1.0-pro", 
+            contents=f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}."
         )
         
-        # Kirim ke Blogger
         kirim_ke_blogger(topik_pilihan, response.text)
-        print(f"AKHIRNYA SUKSES! Centang Hijau Kembali! Terbit: {topik_pilihan}")
+        print(f"AKHIRNYA SUKSES! Centang Hijau Terbit: {topik_pilihan}")
         
     except Exception as e:
         print(f"Detail kendala: {e}")
@@ -56,4 +52,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
+        
