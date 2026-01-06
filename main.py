@@ -4,22 +4,22 @@ import random
 import google.generativeai as genai
 from email.message import EmailMessage
 
-# 1. Identitas Rahasia
+# 1. Kredensial
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Aktifkan Otak AI
+# 2. Inisialisasi
 genai.configure(api_key=api_key)
 
-# 3. DAFTAR JUDUL (Ubah di sini kapan saja lewat HP agar tidak kembar)
+# 3. DAFTAR TOPIK (Ganti judul di sini agar tidak kembar)
 topik_list = [
-    "Tips Mengelola Keuangan Pribadi yang Efektif di Tahun 2026",
-    "Investasi Saham untuk Pemula: Cara Memulai dengan Modal Kecil",
-    "Rahasia Menabung 50 Persen dari Gaji Tanpa Harus Sengsara",
-    "Mengenal Aset Masa Depan yang Cocok untuk Investasi Jangka Panjang",
-    "Strategi Melunasi Hutang dan Cicilan dengan Cepat"
+    "Cara Cerdas Mengatur Keuangan Pribadi di Tahun 2026",
+    "Investasi Saham AI: Panduan Lengkap untuk Pemula",
+    "Rahasia Menabung 50 Persen Gaji Tanpa Tersiksa",
+    "Mengenal Perbedaan Aset dan Liabilitas di Masa Depan",
+    "Strategi Melunasi Hutang dengan Cepat dan Aman"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -34,22 +34,19 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Memilih satu judul secara acak dari daftar di atas
+        # Pilih topik acak dari daftar
         topik_pilihan = random.choice(topik_list)
         
-        # Menggunakan model paling stabil (Jalur Centang Hijau)
+        # Gunakan model paling stabil
         model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}.")
         
-        # Membuat isi artikel
-        prompt = f"Tulis artikel blog SEO friendly yang mendalam tentang: {topik_pilihan}."
-        response = model.generate_content(prompt)
-        
-        # Kirim ke Blogger
+        # Publikasi
         kirim_ke_blogger(topik_pilihan, response.text)
-        print(f"ALHAMDULILLAH! Centang Hijau Kembali! Terbit: {topik_pilihan}")
+        print(f"AKHIRNYA SUKSES! Terbit artikel: {topik_pilihan}")
         
     except Exception as e:
-        print(f"Robot gagal karena: {e}")
+        print(f"Detail kendala: {e}")
         exit(1)
 
 if __name__ == "__main__":
