@@ -10,18 +10,16 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Konfigurasi AI
+# 2. Konfigurasi "Otak" AI
 genai.configure(api_key=api_key)
 
-# 3. DAFTAR TOPIK MANUAL (Ubah di sini agar tidak kembar)
+# 3. DAFTAR TOPIK (Ubah judul di sini secara rutin agar tidak kembar)
 topik_list = [
-    "Tips Mengelola Gaji Kecil Agar Bisa Nabung di 2026",
-    "Cara Investasi Crypto Aman untuk Pemula Tahun Ini",
-    "Rahasia Mengatur Keuangan Keluarga Tanpa Stres",
-    "Daftar Saham AI Paling Menjanjikan Bulan Januari",
-    "Cara Melunasi Hutang dengan Metode Snowball",
-    "Aplikasi Keuangan Terbaik yang Wajib Ada di HP Anda",
-    "Pentingnya Dana Darurat di Masa Depan"
+    "Cara Cerdas Mengatur Gaji Bulanan Agar Tetap Bisa Menabung",
+    "Pilihan Investasi Terbaik untuk Pemula di Tahun 2026",
+    "Pentingnya Dana Darurat dan Cara Mengumpulkannya",
+    "Tips Memilih Saham yang Menguntungkan untuk Jangka Panjang",
+    "Rahasia Sukses Mengelola Keuangan Keluarga Tanpa Konflik"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -36,18 +34,19 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Memilih satu topik secara acak dari list di atas
+        # Robot memilih satu judul secara acak dari daftar
         topik_pilihan = random.choice(topik_list)
         
-        model = genai.GenerativeModel('gemini-pro') # Menggunakan pro yang sangat stabil
+        # Menggunakan model paling stabil
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
-        # Membuat konten berdasarkan topik pilihan
+        # Proses pembuatan artikel
         prompt = f"Tulis artikel blog SEO friendly yang mendalam tentang: {topik_pilihan}."
         response = model.generate_content(prompt)
         
         # Kirim ke Blogger
         kirim_ke_blogger(topik_pilihan, response.text)
-        print(f"SUKSES! Centang Hijau Kembali! Terbit: {topik_pilihan}")
+        print(f"ALHAMDULILLAH! Centang Hijau Kembali! Terbit: {topik_pilihan}")
         
     except Exception as e:
         print(f"Gagal karena: {e}")
