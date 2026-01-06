@@ -1,25 +1,24 @@
 import os
 import smtplib
 import random
-import google.generativeai as genai
+from google import genai # Ini harus sama dengan isi requirements.txt
 from email.message import EmailMessage
 
-# 1. Ambil Rahasia GitHub
+# 1. Kredensial
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Konfigurasi "Otak" AI
-genai.configure(api_key=api_key)
+# 2. Inisialisasi Robot (Versi Stabil 2026)
+client = genai.Client(api_key=api_key)
 
-# 3. DAFTAR TOPIK MANUAL (Ganti judul di sini agar tidak kembar)
+# 3. DAFTAR TOPIK MANUAL (Isi Judul di Sini Agar Tidak Kembar)
 topik_list = [
-    "Pilihan Saham AI Paling Prospektif di Tahun 2026",
-    "Cara Aman Mengelola Aset Kripto untuk Pemula",
-    "Rahasia Mengatur Keuangan di Tengah Ketidakpastian Ekonomi",
-    "Tips Menabung Emas dengan Modal Gaji UMR",
-    "Mengenal Instrumen Investasi Syariah yang Menguntungkan"
+    "Cara Cerdas Mengatur Keuangan Pribadi di Tahun 2026",
+    "Tips Investasi Saham AI untuk Pemula",
+    "Rahasia Menabung 50 Persen Gaji Tanpa Tersiksa",
+    "Pentingnya Memiliki Dana Darurat Sejak Dini"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -34,23 +33,23 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Memilih satu topik secara acak
+        # Pilih judul dari list manual agar tidak error 404 saat cari judul otomatis
         topik_pilihan = random.choice(topik_list)
         
-        # Menggunakan model 1.5 Flash yang sangat stabil
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
-        # Proses pembuatan artikel
-        prompt = f"Tulis artikel blog SEO friendly yang mendalam tentang: {topik_pilihan}."
-        response = model.generate_content(prompt)
+        # Buat artikel menggunakan model paling stabil
+        response = client.models.generate_content(
+            model="gemini-1.5-flash", 
+            contents=f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}."
+        )
         
         # Kirim ke Blogger
         kirim_ke_blogger(topik_pilihan, response.text)
-        print(f"ALHAMDULILLAH! Centang Hijau Kembali! Terbit: {topik_pilihan}")
+        print(f"AKHIRNYA SUKSES! Centang Hijau Kembali! Terbit: {topik_pilihan}")
         
     except Exception as e:
-        print(f"Gagal karena: {e}")
+        print(f"Detail kendala: {e}")
         exit(1)
 
 if __name__ == "__main__":
     main()
+        
