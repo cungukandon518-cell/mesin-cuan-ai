@@ -1,22 +1,16 @@
 import os
 import smtplib
+import google.generativeai as genai
 from email.message import EmailMessage
-# Menggunakan pemanggilan langsung untuk menghindari bentrokan sistem
-try:
-    import google.genai as genai_api
-except ImportError:
-    # Jika masih gagal, robot akan memberikan info yang jelas
-    print("Pustaka google-genai belum terpasang dengan benar.")
-    exit(1)
 
-# 1. Kredensial
+# 1. Kredensial dari GitHub Secrets
 api_key = os.environ.get('GEMINI_API_KEY')
 sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Client
-client = genai_api.Client(api_key=api_key)
+# 2. Konfigurasi "Otak" AI
+genai.configure(api_key=api_key)
 
 def kirim_ke_blogger(subjek, isi):
     msg = EmailMessage()
@@ -30,25 +24,27 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Menggunakan model 1.5 Flash yang paling stabil
-        model_id = "gemini-1.5-flash"
+        # Menggunakan model Gemini 1.5 Flash yang paling kompatibel
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
-        # A. Membuat Judul Unik (Anti-Duplikat)
-        p_judul = "Buatkan satu judul unik artikel blog tentang Keuangan/Investasi 2026. Judul saja."
-        res_judul = client.models.generate_content(model=model_id, contents=p_judul)
+        # A. Mencari Judul Baru (Mencegah Duplikat)
+        prompt_judul = "Berikan satu judul unik tentang tips keuangan atau investasi tahun 2026. Hanya judul saja."
+        res_judul = model.generate_content(prompt_judul)
         topik = res_judul.text.strip()
         
-        # B. Menulis Artikel
-        p_artikel = f"Tulis artikel blog SEO friendly berdasarkan judul ini: {topik}."
-        res_artikel = client.models.generate_content(model=model_id, contents=p_artikel)
+        # B. Menulis Konten
+        prompt_artikel = f"Tulis artikel blog yang menarik dan SEO friendly berdasarkan judul ini: {topik}."
+        res_artikel = model.generate_content(prompt_artikel)
         
-        # C. Publikasi
+        # C. Kirim ke Blog
         kirim_ke_blogger(topik, res_artikel.text)
-        print(f"Berhasil! Artikel terbit: {topik}")
+        print(f"Sukses! Artikel terbit: {topik}")
         
     except Exception as e:
-        print(f"Terjadi kesalahan teknis: {e}")
+        # Menampilkan pesan jika terjadi kendala teknis
+        print(f"Ada kendala: {e}")
         exit(1)
 
 if __name__ == "__main__":
     main()
+        
