@@ -1,7 +1,7 @@
 import os
 import smtplib
-import google.generativeai as genai
 from email.message import EmailMessage
+from google import genai # Memanggil library masa depan
 
 # 1. Ambil Kredensial
 api_key = os.environ.get('GEMINI_API_KEY')
@@ -9,8 +9,8 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Konfigurasi AI
-genai.configure(api_key=api_key)
+# 2. Inisialisasi Client (Tanpa v1beta, langsung Jalur Utama)
+client = genai.Client(api_key=api_key)
 
 def kirim_ke_blogger(subjek, isi):
     msg = EmailMessage()
@@ -24,27 +24,26 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Menggunakan model Flash yang paling kompatibel di awal 2026
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Menggunakan model Gemini 1.5 Flash jalur stabil
+        model_name = "gemini-1.5-flash"
         
-        # A. Buat Judul Unik
-        p_judul = "Buat satu judul unik tentang tips keuangan cerdas 2026. Judul saja."
-        res_judul = model.generate_content(p_judul)
-        topik = res_judul.text.strip()
+        # A. Mencari Judul (Anti-Duplikat)
+        prompt_j = "Berikan satu judul unik artikel blog tentang finansial 2026. Judul saja."
+        res_j = client.models.generate_content(model=model_name, contents=prompt_j)
+        topik = res_j.text.strip()
         
-        # B. Tulis Artikel
-        p_artikel = f"Tulis artikel blog SEO friendly berdasarkan judul: {topik}."
-        res_artikel = model.generate_content(p_artikel)
+        # B. Menulis Artikel
+        prompt_a = f"Tulis artikel blog SEO friendly berdasarkan judul ini: {topik}."
+        res_a = client.models.generate_content(model=model_name, contents=prompt_a)
         
-        # C. Posting
-        kirim_ke_blogger(topik, res_artikel.text)
-        print(f"Berhasil! Artikel terbit: {topik}")
+        # C. Kirim
+        kirim_ke_blogger(topik, res_a.text)
+        print(f"Alhamdulillah! Centang Hijau! Terbit: {topik}")
         
     except Exception as e:
-        # Menampilkan pesan error agar kita tahu masalahnya
-        print(f"Robot menemui kendala: {e}")
+        print(f"Sistem menyerah karena: {e}")
         exit(1)
 
 if __name__ == "__main__":
     main()
-    
+        
