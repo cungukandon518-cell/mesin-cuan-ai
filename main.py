@@ -1,7 +1,7 @@
 import os
 import smtplib
 import random
-from google import genai # Ini harus sama dengan isi requirements.txt
+from google import genai # Memanggil identitas baru yang sudah terpasang
 from email.message import EmailMessage
 
 # 1. Kredensial
@@ -10,15 +10,16 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Robot (Versi Stabil 2026)
+# 2. Inisialisasi Robot (Versi Stabil Masa Depan)
 client = genai.Client(api_key=api_key)
 
-# 3. DAFTAR TOPIK MANUAL (Isi Judul di Sini Agar Tidak Kembar)
+# 3. DAFTAR TOPIK MANUAL (Agar Artikel Tidak Kembar)
 topik_list = [
-    "Cara Cerdas Mengatur Keuangan Pribadi di Tahun 2026",
-    "Tips Investasi Saham AI untuk Pemula",
-    "Rahasia Menabung 50 Persen Gaji Tanpa Tersiksa",
-    "Pentingnya Memiliki Dana Darurat Sejak Dini"
+    "Tips Finansial 2026: Cara Mengatur Gaji Agar Tidak Cepat Habis",
+    "Investasi AI: Mengapa Tahun Ini Adalah Waktu Terbaik Memulai",
+    "Rahasia Dana Darurat yang Sering Dilupakan Orang",
+    "Cara Melunasi Cicilan Tanpa Perlu Gali Lubang Tutup Lubang",
+    "Strategi Cerdas Membeli Emas untuk Jangka Panjang"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -33,13 +34,13 @@ def kirim_ke_blogger(subjek, isi):
 
 def main():
     try:
-        # Pilih judul dari list manual agar tidak error 404 saat cari judul otomatis
+        # Pilih judul secara acak agar tidak kembar
         topik_pilihan = random.choice(topik_list)
         
-        # Buat artikel menggunakan model paling stabil
+        # Menggunakan jalur stabil agar tidak terkena error 404
         response = client.models.generate_content(
             model="gemini-1.5-flash", 
-            contents=f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}."
+            contents=f"Tulis artikel blog SEO friendly yang mendalam tentang: {topik_pilihan}."
         )
         
         # Kirim ke Blogger
@@ -52,4 +53,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-        
+    
