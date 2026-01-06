@@ -1,7 +1,7 @@
 import os
 import smtplib
 import random
-from google import genai 
+import google.generativeai as genai
 from email.message import EmailMessage
 
 # 1. Kredensial
@@ -10,16 +10,14 @@ sender_email = os.environ.get('SENDER_EMAIL')
 gmail_password = os.environ.get('GMAIL_PASSWORD')
 blogger_email = os.environ.get('BLOGGER_EMAIL')
 
-# 2. Inisialisasi Robot (Gunakan jalur otomatis)
-client = genai.Client(api_key=api_key)
+genai.configure(api_key=api_key)
 
-# 3. DAFTAR TOPIK MANUAL (Agar Artikel Tidak Kembar)
+# 2. DAFTAR TOPIK MANUAL (Agar tidak kembar)
 topik_list = [
     "Cara Cerdas Mengatur Keuangan di Tahun 2026",
     "Investasi Saham untuk Pemula: Mulai dari Mana?",
     "Tips Menabung 50 Persen Gaji Tanpa Tersiksa",
-    "Mengenal Aset yang Cocok untuk Masa Depan",
-    "Strategi Melunasi Hutang dengan Cepat dan Aman"
+    "Mengenal Aset yang Cocok untuk Masa Depan"
 ]
 
 def kirim_ke_blogger(subjek, isi):
@@ -33,23 +31,30 @@ def kirim_ke_blogger(subjek, isi):
         smtp.send_message(msg)
 
 def main():
-    try:
-        topik_pilihan = random.choice(topik_list)
-        
-        # MENGGUNAKAN GEMINI-1.0-PRO UNTUK MENGHINDARI 404
-        # Jika model 1.5-flash menolak, model 1.0-pro biasanya selalu terbuka
-        response = client.models.generate_content(
-            model="gemini-1.0-pro", 
-            contents=f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}."
-        )
-        
-        kirim_ke_blogger(topik_pilihan, response.text)
-        print(f"AKHIRNYA SUKSES! Centang Hijau Terbit: {topik_pilihan}")
-        
-    except Exception as e:
-        print(f"Detail kendala: {e}")
+    topik_pilihan = random.choice(topik_list)
+    # DAFTAR MODEL YANG AKAN DICOBA SATU PER SATU
+    daftar_model = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro']
+    
+    berhasil = False
+    for nama_model in daftar_model:
+        try:
+            print(f"Mencoba mengetuk pintu model: {nama_model}...")
+            model = genai.GenerativeModel(nama_model)
+            response = model.generate_content(f"Tulis artikel blog SEO friendly tentang: {topik_pilihan}.")
+            
+            # Jika sampai sini tidak error, berarti berhasil
+            kirim_ke_blogger(topik_pilihan, response.text)
+            print(f"ALHAMDULILLAH! Berhasil dengan model {nama_model}. Terbit: {topik_pilihan}")
+            berhasil = True
+            break # Berhenti mencari jika sudah sukses
+        except Exception as e:
+            print(f"Model {nama_model} menolak (404/Error). Mencoba model berikutnya...")
+            continue
+
+    if not berhasil:
+        print("Semua model menolak. Harap cek apakah API Key di GitHub Secrets sudah benar.")
         exit(1)
 
 if __name__ == "__main__":
     main()
-        
+            
