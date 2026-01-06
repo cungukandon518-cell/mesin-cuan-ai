@@ -1,37 +1,37 @@
-name: Mesin Cuan Otomatis
+        name: run-ai
 
 on:
   schedule:
-    - cron: '0 20 * * *' # Jalan otomatis jam 03:00 WIB
+    # Berjalan otomatis setiap 6 jam (bisa disesuaikan)
+    - cron: '0 */6 * * *'
   workflow_dispatch:
+    # Memungkinkan Anda menjalankan secara manual dari tab Actions
 
 jobs:
-  run-ai:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.10' # Versi yang mendukung pustaka AI terbaru
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install google-generativeai
+          pip install -r requirements.txt
+        # Memastikan semua alat yang dibutuhkan terpasang dengan bersih
+
       - name: Jalankan Script
         env:
+          # Menghubungkan "Secrets" yang Anda buat ke dalam kode mesin
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
           GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
           BLOGGER_EMAIL: ${{ secrets.BLOGGER_EMAIL }}
         run: python main.py
-      - name: Simpan Hasil
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action Bot"
-          git add .
-          git commit -m "Update Konten: $(date)" || exit 0
-          git push
-          
+        
