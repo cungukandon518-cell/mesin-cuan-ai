@@ -12,79 +12,82 @@ blogger_email = os.environ.get('BLOGGER_EMAIL')
 
 genai.configure(api_key=api_key)
 
-def kirim_ke_blogger(subjek, isi):
-    print("Mengirim email ke Blogger...")
+def kirim_ke_blogger(subjek, isi_html):
+    print("Mengirim email HTML ke Blogger...")
     msg = EmailMessage()
-    msg.set_content(isi)
+    msg.set_content("Silakan aktifkan tampilan HTML untuk melihat artikel ini.") # Fallback
+    msg.add_alternative(isi_html, subtype='html') # Versi HTML agar rapi di Blogspot
+    
     msg['Subject'] = subjek
     msg['From'] = sender_email
     msg['To'] = blogger_email
+    
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(sender_email, gmail_password)
         smtp.send_message(msg)
-    print("Artikel TERKIRIM!")
+    print("Artikel HTML TERKIRIM!")
 
 def main():
-    # DAFTAR TOPIK (Teknologi, Keuangan, AI)
+    # DAFTAR TOPIK TERBARU 2026 (High CPC & Trending)
     topik_list = [
-        "Peluang Investasi di Era Web3 dan Kecerdasan Buatan",
-        "Bagaimana AI Mengubah Wajah Perbankan Syariah di Masa Depan",
-        "Strategi Yield Farming Kripto yang Aman dengan Optimasi AI",
-        "Peran Machine Learning dalam Memprediksi Pergerakan IHSG",
-        "Memanfaatkan AI untuk Perencanaan Keuangan UMKM agar Cepat Naik Kelas",
-        "Mengenal Algo-Trading untuk Pemula: Cuan Konsisten dengan Robot",
-        "Transformasi Asuransi Jiwa Berbasis Data Gaya Hidup dan AI",
-        "Cara Menghasilkan Dolar dari Konten Video yang Dibuat Sepenuhnya oleh AI",
-        "Masa Depan Pembayaran: Dari Scan QR ke Pengenalan Wajah Berbasis AI",
-        "Strategi Mengelola Dana Darurat di Tengah Ketidakpastian Ekonomi Digital",
-        "Peluang Karir Baru di Sektor FinTech yang Didorong oleh AI",
-        "Cara Memilih Reksa Dana Terbaik Menggunakan Analisis Robot Advisor",
-        "Dampak Integrasi AI pada Efisiensi Operasional Bank Digital",
-        "Mengungkap Rahasia Sukses Investor Institusi yang Menggunakan Big Data AI",
-        "Peran AI dalam Memitigasi Risiko Investasi di Pasar Kripto yang Volatil",
-        "Inovasi Perbankan: Mengapa Chatbot AI Menjadi Sahabat Baru Nasabah",
-        "Strategi Membangun Portofolio Saham Teknologi di Tengah AI Boom",
-        "Bagaimana AI Membantu Menemukan Peluang Arbitrase di Pasar Modal",
-        "Pentingnya Literasi Keuangan Digital di Era Otomasi Kecerdasan Buatan",
-        "Review Tools AI Terbaru untuk Pencatatan Keuangan Otomatis",
-        "Masa Depan Properti: Bagaimana AI Memprediksi Lokasi Investasi Terbaik",
-        "Menggunakan AI untuk Perbandingan Kurs Valas Secara Real-Time",
-        "Cara Efektif Menabung Emas Digital dengan Bantuan Prediksi Harga AI",
-        "Etika dan Keamanan: Menjaga Privasi Data Keuangan di Era AI",
-        "Strategi Melunasi Hutang KPR Lebih Cepat dengan Simulasi Pintar AI",
-        "Dampak Adopsi AI pada Kinerja Perusahaan Sektor Konsumsi",
-        "Mengenal Konsep Digital Twin dalam Manajemen Kekayaan Pribadi",
-        "Tips Sukses Berbisnis Dropship dengan Riset Produk Berbasis AI",
-        "Bagaimana AI Mengubah Cara Kita Berinvestasi di Sektor Energi Hijau",
-        "Masa Depan Konsultasi Keuangan: Apakah Manusia Akan Digantikan AI?"
+        "Cara Mengelola AI Agent Pribadi untuk Produktivitas 10x Lipat",
+        "Panduan Investasi Real Estate di Metaverse yang Masih Prospektif",
+        "Mengenal Bio-Hacking: Optimasi Kesehatan Berbasis Data AI dan DNA",
+        "Strategi Keamanan Finansial di Era Deepfake Voice Scam",
+        "Peluang Cuan dari Carbon Trading Retail bagi Investor Pemula",
+        "Mengapa Keterampilan Prompt Engineering Kini Digantikan oleh Agentic AI",
+        "Cara Membangun Passive Income dengan Menyewakan GPU untuk Latihan AI",
+        "Dampak Hyper-Personalization AI pada Kebiasaan Belanja Generasi Alpha",
+        "Masa Depan Pekerjaan Kerah Putih di Tengah Dominasi Autopilot AI",
+        "Review Kacamata AR Terbaik 2026 untuk Bekerja Secara Remote",
+        "Sistem Barter Digital: Apakah Crypto Akan Kembali ke Fungsi Aslinya?",
+        "Eksplorasi AI dalam Mempercepat Penemuan Obat-obatan Penyakit Langka",
+        "Bagaimana AI Membantu Gen Z Meraih Kebebasan Finansial Sebelum Usia 30",
+        "Etika AI: Siapa yang Bertanggung Jawab Jika AI Mengalami Kerugian Finansial?",
+        "Pemanfaatan Robot Humanoid dalam Industri Logistik dan UMKM",
+        "Analisis Prediktif AI untuk Menemukan Koin Kripto 'Micin' Berkualitas",
+        "Cara Proteksi Data Pribadi dari Scraping Massal Perusahaan AI",
+        "Transformasi Pendidikan: Guru sebagai Mentor, AI sebagai Pengajar",
+        "Strategi Bisnis Dropshipping Berbasis Prediksi Tren AI 2026",
+        "Micro-SaaS: Membangun Aplikasi Kecil Berbasis AI Tanpa Coding",
+        "Masa Depan Transportasi: Taksi Terbang dan Integrasi Navigasi AI",
+        "Pengaruh Kedaulatan Data (Data Sovereignty) terhadap Harga Saham Teknologi",
+        "Menggunakan AI untuk Deteksi Dini Penyakit Mental dari Pola Ketikan",
+        "Smart Home 2.0: Ketika Rumahmu Bisa Mengatur Budget Belanja Sendiri",
+        "Peluang Ekonomi di Sektor Wisata Luar Angkasa dan Peran AI",
+        "Digital Twin: Memiliki Kembaran Digital untuk Uji Coba Strategi Bisnis",
+        "Cara Menggunakan AI untuk Menulis Buku Non-Fiksi dalam 24 Jam",
+        "Dampak Integrasi Chip Otak (Neural Interface) pada Interaksi Manusia",
+        "Sustainabilty Tech: AI sebagai Kunci Utama Melawan Perubahan Iklim",
+        "Self-Sovereign Identity: Cara Mengontrol Identitas Digital di Web4"
     ]
     
-    # LOGIKA PENGAMBILAN URUT
-    # Mengambil nomor urut eksekusi dari GitHub (default 1 jika tidak ada)
     run_number = int(os.environ.get('GITHUB_RUN_NUMBER', '1'))
-    
-    # Menghitung index (Jika run ke-31 dan topik cuma 30, dia akan balik ke topik ke-1)
     index = (run_number - 1) % len(topik_list)
     topik = topik_list[index]
     
     try:
-        # Deteksi Model Otomatis (Gaya Klasik Stabil Anda)
-        models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        model_id = 'models/gemini-1.5-flash' if 'models/gemini-1.5-flash' in models else models[0]
-        model = genai.GenerativeModel(model_id.replace('models/', ''))
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
+        # PROMPT YANG DIPERTANJAM (Output HTML)
         prompt = f"""
-        Tulis artikel blog SEO friendly dalam Bahasa Indonesia tentang: {topik}.
-        Gunakan format teks biasa yang rapi dengan sub-judul.
-        Sertakan poin-poin penting agar mudah dibaca.
-        Di bagian paling akhir artikel, tambahkan bagian 'Baca Juga Rekomendasi Artikel Lainnya:' 
-        lalu berikan 3 judul artikel terkait keuangan/AI lainnya dalam bentuk daftar poin.
+        Tulis artikel blog yang mendalam dan informatif tentang: {topik}.
+        Gunakan Bahasa Indonesia yang santai tapi profesional.
+        
+        WAJIB: Gunakan format HTML.
+        - Gunakan tag <h2> dan <h3> untuk sub-judul.
+        - Gunakan <strong> untuk poin penting.
+        - Gunakan <ul> dan <li> untuk daftar/list.
+        - Sertakan kesimpulan yang kuat di akhir.
+        - Tambahkan bagian 'Rekomendasi Bacaan:' dengan 3 judul terkait dalam bentuk list HTML.
+        
+        Pastikan artikel minimal 600 kata dan SEO friendly.
         """
         
-        print(f"Memproses artikel urut ke-{run_number}: {topik}")
+        print(f"Memproses artikel ke-{run_number}: {topik}")
         response = model.generate_content(prompt)
         
-        # Kirim ke Blogger
+        # Kirim dalam format HTML
         kirim_ke_blogger(topik, response.text)
         print(f"PROSES SELESAI! (Index: {index})")
         
