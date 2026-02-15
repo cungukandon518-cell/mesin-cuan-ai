@@ -1,4 +1,4 @@
-import os
+Import os
 import random
 import smtplib
 import google.generativeai as genai
@@ -25,7 +25,7 @@ def kirim_ke_blogger(subjek, isi):
     print("Artikel TERKIRIM!")
 
 def main():
-    # DAFTAR TOPIK BARU 2026 (Fresh & High Interest)
+    # DAFTAR TOPIK (Teknologi, Keuangan, AI)
     topik_list = [
         "Panduan Membangun AI Agent Pribadi untuk Automasi Tugas Harian",
         "Masa Depan Investasi: Mengapa Karbon Kredit Menjadi Aset Berharga",
@@ -56,24 +56,26 @@ def main():
         "Strategi Exit Plan Investasi di Tengah Volatilitas Ekonomi Global",
         "Membangun Brand Pribadi di Era AI: Menjadi Manusia yang Tak Tergantikan",
         "Cara AI Membantu Menemukan Hobi yang Menghasilkan Cuan",
-        "Masa Depan Konsultasi Psikologi: AI Sebagai Pendengar 24 Jam"
-    ]
+        "Masa Depan Konsultasi Psikologi: AI Sebagai Pendengar 24 Jam"]
     
     # LOGIKA PENGAMBILAN URUT
+    # Mengambil nomor urut eksekusi dari GitHub (default 1 jika tidak ada)
     run_number = int(os.environ.get('GITHUB_RUN_NUMBER', '1'))
+    
+    # Menghitung index (Jika run ke-31 dan topik cuma 30, dia akan balik ke topik ke-1)
     index = (run_number - 1) % len(topik_list)
     topik = topik_list[index]
     
     try:
-        # Perbaikan inisialisasi model agar tidak error 404
-        # Menggunakan model flash terbaru yang stabil
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Deteksi Model Otomatis (Gaya Klasik Stabil Anda)
+        models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+        model_id = 'models/gemini-1.5-flash' if 'models/gemini-1.5-flash' in models else models[0]
+        model = genai.GenerativeModel(model_id.replace('models/', ''))
         
         prompt = f"""
         Tulis artikel blog SEO friendly dalam Bahasa Indonesia tentang: {topik}.
         Gunakan format teks biasa yang rapi dengan sub-judul.
         Sertakan poin-poin penting agar mudah dibaca.
-        Berikan informasi yang edukatif dan terbaru di tahun 2026.
         Di bagian paling akhir artikel, tambahkan bagian 'Baca Juga Rekomendasi Artikel Lainnya:' 
         lalu berikan 3 judul artikel terkait keuangan/AI lainnya dalam bentuk daftar poin.
         """
