@@ -1,4 +1,4 @@
-Import os
+import os
 import random
 import smtplib
 import google.generativeai as genai
