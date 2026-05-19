@@ -25,7 +25,7 @@ def kirim_ke_blogger(subjek, isi):
     print("Artikel TERKIRIM!")
 
 def main():
-    # DAFTAR TOPIK (Teknologi, Keuangan, AI)
+    # DAFTAR TOPIK BARU 2026
     topik_list = [
         "Panduan Membangun AI Agent Pribadi untuk Automasi Tugas Harian",
         "Masa Depan Investasi: Mengapa Karbon Kredit Menjadi Aset Berharga",
@@ -52,32 +52,67 @@ def main():
         "Dampak Integrasi Chip Neural pada Produktivitas Kerja Manusia",
         "Pemanfaatan AI dalam Pertanian Presisi untuk Ketahanan Pangan Rumah Tangga",
         "Micro-SaaS: Membangun Aplikasi AI Spesifik Tanpa Harus Jago Coding",
-        "Mengapa Literasi Prompt Engineering Kini Menjadi Skill Dasar di Sekolah",
+        "Menggunakan AI untuk Riset Tren Jualan Online yang Cepat Laku",
         "Strategi Exit Plan Investasi di Tengah Volatilitas Ekonomi Global",
         "Membangun Brand Pribadi di Era AI: Menjadi Manusia yang Tak Tergantikan",
         "Cara AI Membantu Menemukan Hobi yang Menghasilkan Cuan",
-        "Masa Depan Konsultasi Psikologi: AI Sebagai Pendengar 24 Jam"]
+        "Masa Depan Konsultasi Psikologi: AI Sebagai Pendengar 24 Jam"
+    ]
     
-    # LOGIKA PENGAMBILAN URUT
-    # Mengambil nomor urut eksekusi dari GitHub (default 1 jika tidak ada)
     run_number = int(os.environ.get('GITHUB_RUN_NUMBER', '1'))
-    
-    # Menghitung index (Jika run ke-31 dan topik cuma 30, dia akan balik ke topik ke-1)
     index = (run_number - 1) % len(topik_list)
     topik = topik_list[index]
     
+    # --- LOGIKA PENENTUAN IKLAN PRODUK DIGITAL (80% PEMBAHASAN UTAMA) ---
+    topik_lower = topik.lower()
+    if "keuangan" in topik_lower or "investasi" in topik_lower or "pajak" in topik_lower or "ekonomi" in topik_lower:
+        nama_produk = "25+ Template Excel Keuangan Premium"
+        detail_produk = """
+        - Berisi lebih dari 25 template siap pakai untuk laporan keuangan harian, bulanan, analisis profit-loss, hingga budgeting otomatis.
+        - Keunggulan: Praktis, otomatis, mudah digunakan bahkan untuk pemula, dan membantu mengambil keputusan finansial lebih akurat tanpa pusing rumus matematika.
+        - Harga Promo Spesial: Hanya IDR 11,000 (Diskon dari IDR 22,000).
+        """
+    elif "konten" in topik_lower or "brand" in topik_lower or "viral" in topik_lower or "jualan" in topik_lower:
+        nama_produk = "1000+ Ide Konten Jualan Siap Pakai & 3000+ Desain Template Promosi"
+        detail_produk = """
+        - Berisi 1000+ ide konten jualan harian yang praktis, siap pakai, dan sudah teruji menaikkan interaksi di media sosial.
+        - Dilengkapi dengan bundel 3000+ desain template promosi yang mudah diedit di Canva untuk berbagai kebutuhan bisnis online dan UMKM.
+        - Keunggulan: Hemat waktu, bikin jualan makin laris, desain berkualitas tinggi, dan langsung pakai instant download.
+        - Harga Promo Spesial: Hanya IDR 10,000 - IDR 11,000 saja.
+        """
+    else:
+        nama_produk = "Bundle Mega Pack 500++ Produk Digital Premium (Siap Jual Kembali)"
+        detail_produk = """
+        - Paket terlengkap berisi 500++ produk digital siap pakai mulai dari e-book, template Canva, template website, ecourse jualan online, hingga aplikasi hitung keuangan.
+        - Keunggulan: Dilengkapi dengan hak PLR/MRR (Bisa Diperjualbelikan Kembali), artinya pembeli bisa menjual ulang paket ini dan mendapatkan PROFIT 100% penuh tanpa bagi hasil. Dapat bonus video cara jualan dan bimbingan lewat WhatsApp.
+        - Harga Promo Spesial: Hanya IDR 29,000 (Harga Normal IDR 319,000).
+        """
+
     try:
-        # Deteksi Model Otomatis (Gaya Klasik Stabil Anda)
-        models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        model_id = 'models/gemini-1.5-flash' if 'models/gemini-1.5-flash' in models else models[0]
-        model = genai.GenerativeModel(model_id.replace('models/', ''))
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
+        # PROMPT STRATEGI 80% PRODUK DIGITAL : 20% NICHE AWAL
         prompt = f"""
-        Tulis artikel blog SEO friendly dalam Bahasa Indonesia tentang: {topik}.
-        Gunakan format teks biasa yang rapi dengan sub-judul.
-        Sertakan poin-poin penting agar mudah dibaca.
-        Di bagian paling akhir artikel, tambahkan bagian 'Baca Juga Rekomendasi Artikel Lainnya:' 
-        lalu berikan 3 judul artikel terkait keuangan/AI lainnya dalam bentuk daftar poin.
+        Tulis artikel blog SEO friendly dalam Bahasa Indonesia dengan ketentuan struktur bobot bahasan berikut:
+        
+        1. TOPiK UTAMA PEMBUKA (Bobot 20%): {topik}. 
+           Tulis bagian pengantar atau latar belakang masalah secara singkat, padat, dan menarik mengenai topik ini di 1-2 paragraf awal saja.
+        
+        2. PEMBAHASAN SOLUSI & PRODUK DIGITAL (Bobot 80%): 
+           Hubungkan masalah di atas langsung dengan pentingnya memiliki tools instan. Gunakan sisa porsi artikel (paling besar) untuk membedah secara mendalam dan merekomendasikan produk digital berikut:
+           - Nama Produk: {nama_produk}
+           - Detail & Manfaat yang harus diulas: 
+           {detail_produk}
+           
+           Buat ulasan yang sangat detail mengenai manfaat produk ini, mengapa pembaca wajib memilikinya sekarang juga untuk mempermudah hidup/bisnis mereka, dan mengapa harganya sangat murah dan menguntungkan. Gunakan sub-judul (heading) yang menarik untuk membedah produk ini.
+        
+        3. CALL TO ACTION (CTA):
+           Di akhir ulasan produk, berikan kalimat ajakan yang kuat untuk membeli, lalu tuliskan teks penanda tautan persis seperti ini: '[KLIK DI SINI UNTUK AMBIL SEKARANG: https://lynk.id/planifyid]'.
+        
+        4. REKOMENDASI BACAAN:
+           Di bagian paling akhir artikel, tambahkan bagian 'Baca Juga Rekomendasi Artikel Lainnya:' lalu berikan 3 judul artikel terkait keuangan/AI lainnya dalam bentuk daftar poin.
+        
+        Gunakan format teks biasa yang rapi dengan sub-judul. Gunakan poin-poin penting agar mudah dibaca. Jangan pakai markdown bold bintang ganda di dalam tanda kurung link.
         """
         
         print(f"Memproses artikel urut ke-{run_number}: {topik}")
