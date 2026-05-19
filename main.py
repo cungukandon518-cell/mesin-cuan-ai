@@ -89,6 +89,7 @@ def main():
         """
 
     try:
+        # Perbaikan krusial: Memanggil model langsung lewat string nama resmi
         model = genai.GenerativeModel('gemini-1.5-flash')
         
         # PROMPT STRATEGI 80% PRODUK DIGITAL : 20% NICHE AWAL
@@ -128,4 +129,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
+        
